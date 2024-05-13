@@ -1,3 +1,5 @@
 yfinance
 pandas
 alpha_vantage
+azure-storage-file-datalake
+azure-identity
