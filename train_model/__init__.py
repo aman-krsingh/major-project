@@ -59,7 +59,12 @@ def main(req: HttpRequest) -> HttpResponse:
     max_date_str = max_date.strftime("%Y-%m-%d")
     
     ticker='AAPL'
-    data = pd.read_csv(f'./data/{ticker}/{ticker}_{max_date_str}.csv')
+    f_client = filesystem_client.get_file_client(f"data/{ticker}/{ticker}_{max_date_str}.csv")
+    downloaded_bytes = f_client.download_file().readall()
+    read_bytes = BytesIO(downloaded_bytes)
+    data = pd.read_csv(read_bytes)
+   
+   # data = pd.read_csv(f'./data/{ticker}/{ticker}_{max_date_str}.csv')
     
     size = len(data)
     year = 365 * 5
