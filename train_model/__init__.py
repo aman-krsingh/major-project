@@ -38,6 +38,10 @@ def main(req: HttpRequest) -> HttpResponse:
             name = req_body.get('name')
 
 
+    account_url = f"https://storageaacount456.dfs.core.windows.net/"
+    token_credential = DefaultAzureCredential()
+    service_client = DataLakeServiceClient(account_url, credential=token_credential)
+
     filesystem_client = service_client.get_file_system_client(file_system="stocks-data")
     directory_client = filesystem_client.get_directory_client(f"data/{ticker}")
     file_client = filesystem_client.get_paths(f"data/{ticker}",recursive=False)
@@ -109,8 +113,15 @@ def main(req: HttpRequest) -> HttpResponse:
     
     #traning the model and saving it.
     model.fit(X_train, Y_train,validation_data=(X_test,Y_test),epochs=150,batch_size=64,verbose=1)
-    model.save(f'predModel_{ticker}.h5')
-       
+
+    directory_client = filesystem_client.get_directory_client(f"model/{ticker}")
+    file_client = directory_client.get_file_client(f"{ticker}_{current_date}.h5")
+    model_bytes= BytesIO()
+    
+    model.save( model_bytes)
+
+    model_bytes.seek(0)
+    file_client.upload_data(model_bytes,overwrite = True)   
     
     if name:
         return HttpResponse(f"Hello, {name}. This HTTP triggered function executed successfully.")
