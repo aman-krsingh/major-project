@@ -7,7 +7,7 @@ from azure.functions import TimerRequest
 
 from datetime import datetime, timezone
 
-from alpha_vantage.timeseries import TimeSeries
+import yfinance as yf
 
 
 def main(mytimer: TimerRequest) -> None:
@@ -30,9 +30,8 @@ def main(mytimer: TimerRequest) -> None:
     for ticker in ticker_list:
         directory_client = filesystem_client.get_directory_client(f"data/{ticker}")
         file_client = directory_client.get_file_client(f"{ticker}_{current_date}.csv")
-        ts = TimeSeries(key= API_key, output_format='pandas')
-        res = ts.get_daily(ticker, outputsize='full')
-        df=res[0]
+        prd= 12*25
+        df =yf.download(f'{ticker}', period=f'{prd}mo')
         csv_bytes= BytesIO()
         df.to_csv(csv_bytes)
         csv_bytes.seek(0)
