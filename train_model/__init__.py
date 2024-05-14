@@ -47,6 +47,8 @@ def main(req: HttpRequest) -> HttpResponse:
     token_credential = DefaultAzureCredential()
     service_client = DataLakeServiceClient(account_url, credential=token_credential)
 
+    ticker='AAPL'
+   
     filesystem_client = service_client.get_file_system_client(file_system="stocks-data")
     directory_client = filesystem_client.get_directory_client(f"data/{ticker}")
     file_client = filesystem_client.get_paths(f"data/{ticker}",recursive=False)
@@ -63,7 +65,6 @@ def main(req: HttpRequest) -> HttpResponse:
     max_date = max(date_list)
     max_date_str = max_date.strftime("%Y-%m-%d")
     
-    ticker='AAPL'
     f_client = filesystem_client.get_file_client(f"data/{ticker}/{ticker}_{max_date_str}.csv")
     downloaded_bytes = f_client.download_file().readall()
     read_bytes = BytesIO(downloaded_bytes)
