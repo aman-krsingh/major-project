@@ -46,10 +46,23 @@ def main(req: HttpRequest) -> HttpResponse:
     
     account_url = f"https://storageaacount456.dfs.core.windows.net/"
     token_credential = DefaultAzureCredential()
+    service_client = DataLakeServiceClient(account_url, credential=token_credential)
     filesystem_client = service_client.get_file_system_client(file_system="stocks-data")
-    directory_client = filesystem_client.get_directory_client("test")
-    file_client = directory_client.get_file_client("test/AAPL_test.keras")
+    directory_client = filesystem_client.get_directory_client(f"model/{ticker}")
+    file_client = filesystem_client.get_paths(f"model/{ticker}",recursive=False)
+    date_list = []
+    for p in file_client:
+        f = p.name
+        f = f.replace(f"model/{ticker}","").replace(f"/{ticker}_","").replace(".h5","")
+        try:
+            dt = datetime.strptime(f,"%Y-%m-%d")
+            date_list.append(dt)
+        except:
+            pass
     
+    max_date = max(date_list)
+    max_date_str = max_date.strftime("%Y-%m-%d")
+    file_client = directory_client.get_file_client(f"model/{ticker}_{max_date_str}.h5")
     
     # Download the file content into a BytesIO object
     model_weights_bytes = BytesIO(file_client.download_file().readall())
@@ -66,8 +79,11 @@ def main(req: HttpRequest) -> HttpResponse:
     # Clean up the temporary file
     os.unlink(temp_file.name)
     
+    f_client = filesystem_client.get_file_client(f"data/{ticker}/{ticker}_{max_date_str}.csv")
+    downloaded_bytes = f_client.download_file().readall()
+    read_bytes = BytesIO(downloaded_bytes)
+    data = pd.read_csv(read_bytes)
     
-    data = pd.read_csv(f'./data/{ticker}.csv')
     
     size = len(data)
     year = 365 * 5
@@ -151,8 +167,8 @@ def main(req: HttpRequest) -> HttpResponse:
     
     #   future 30days predicted value.
     days_pred = scaler.inverse_transform(lst_output)
-    plt.plot(days_pred, color = "red")
-    plt.show()
+    # plt.plot(days_pred, color = "red")
+    # plt.show()
     
     
     new_data=data.tolist()
@@ -160,11 +176,15 @@ def main(req: HttpRequest) -> HttpResponse:
     new_data = scaler.inverse_transform(new_data).tolist()
     data = scaler.inverse_transform(data)
     
-    plt.plot(new_data, color='red')
-    plt.plot(data, color='blue')
-    plt.show()  
+    # plt.plot(new_data, color='red')
+    # plt.plot(data, color='blue')
+    # plt.show()  
 
-
+    result={
+        "pred_value": days_pred,
+        "hist_with_pred_value":new_data;
+        "hist_value":data;
+    }
     
 
     
