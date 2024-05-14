@@ -62,7 +62,7 @@ def main(req: HttpRequest) -> HttpResponse:
     
     max_date = max(date_list)
     max_date_str = max_date.strftime("%Y-%m-%d")
-    file_client = directory_client.get_file_client(f"model/{ticker}_{max_date_str}.h5")
+    file_client = directory_client.get_file_client(f"model/{ticker}/{ticker}_{max_date_str}.h5")
     
     # Download the file content into a BytesIO object
     model_weights_bytes = BytesIO(file_client.download_file().readall())
