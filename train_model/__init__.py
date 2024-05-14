@@ -127,10 +127,10 @@ def main(req: HttpRequest) -> HttpResponse:
     model.fit(X_train, Y_train,validation_data=(X_test,Y_test),epochs=150,batch_size=64,verbose=1)
 
     directory_client = filesystem_client.get_directory_client(f"model/{ticker}")
-    file_client = directory_client.get_file_client(f"{ticker}_{current_date}.h5")
+    file_client = directory_client.get_file_client(f"{ticker}_{max_date_str}.h5")
     model_bytes= BytesIO()
     
-    model.save( model_bytes)
+    model.save(model_bytes)
 
     model_bytes.seek(0)
     file_client.upload_data(model_bytes,overwrite = True)   
