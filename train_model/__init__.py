@@ -2,6 +2,8 @@ from io import BytesIO
 from azure.storage.filedatalake import DataLakeServiceClient
 from azure.identity import DefaultAzureCredential
 
+import tempfile
+import os
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -128,12 +130,32 @@ def main(req: HttpRequest) -> HttpResponse:
 
     directory_client = filesystem_client.get_directory_client(f"model/{ticker}")
     file_client = directory_client.get_file_client(f"{ticker}_{max_date_str}.h5")
-    model_bytes= BytesIO()
-    
-    model.save(model_bytes)
 
-    model_bytes.seek(0)
-    file_client.upload_data(model_bytes,overwrite = True)   
+    
+    # Save the model weights to a temporary file
+    with tempfile.NamedTemporaryFile(suffix=".h5", delete=False) as temp_file:
+        model.save_weights(temp_file.name)
+   
+    # Read the temporary file into a BytesIO object
+    with open(temp_file.name, 'rb') as f:
+        model_weights_bytes = BytesIO(f.read())
+
+    # Reset the buffer position
+    model_weights_bytes.seek(0)
+   
+    # Upload the model weights to Azure Storage
+    file_client.upload_data(model_weights_bytes, overwrite=True)
+   
+    # Clean up the temporary file
+    os.unlink(temp_file.name)
+
+
+
+
+    # model_bytes= BytesIO()
+    #model.save(model_bytes)
+    # model_bytes.seek(0)
+    # file_client.upload_data(model_bytes,overwrite = True)   
     
     if name:
         return HttpResponse(f"Hello, {name}. This HTTP triggered function executed successfully.")
