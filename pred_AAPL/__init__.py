@@ -3,7 +3,7 @@ from azure.storage.filedatalake import DataLakeServiceClient
 from azure.identity import DefaultAzureCredential
 
 import tempfile
-import os
+import os, json
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -187,5 +187,5 @@ def main(req: HttpRequest) -> HttpResponse:
         "hist_with_pred_value":new_data,
         "hist_value":data
     }
-    return HttpResponse(result)
+    return HttpResponse(json.dumps(result), status_code=200, mimetype="application/json")
 
