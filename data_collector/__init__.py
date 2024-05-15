@@ -1,13 +1,10 @@
+import logging
+import yfinance as yf
 from io import BytesIO
 from azure.storage.filedatalake import DataLakeServiceClient
 from azure.identity import DefaultAzureCredential
-
-import logging
 from azure.functions import TimerRequest
-
 from datetime import datetime, timezone
-
-import yfinance as yf
 
 
 def main(mytimer: TimerRequest) -> None:
@@ -17,13 +14,11 @@ def main(mytimer: TimerRequest) -> None:
     current_date = current_datetime.strftime("%Y-%m-%d")
     
     ticker_list = ['AAPL', 'META', 'GOOG']
-    API_key = 'WSKF50ODKWY4WP1O'
     
     #storage acount address
     account_url = f"https://storageaacount456.dfs.core.windows.net/"
     token_credential = DefaultAzureCredential()
 
-    #service clint bana dega data lake ka
     service_client = DataLakeServiceClient(account_url, credential=token_credential)
     filesystem_client = service_client.get_file_system_client(file_system="stocks-data")    
 
