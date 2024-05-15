@@ -1,4 +1,4 @@
-import logging
+import os,requests,logging
 import yfinance as yf
 from io import BytesIO
 from azure.storage.filedatalake import DataLakeServiceClient
@@ -31,6 +31,8 @@ def main(mytimer: TimerRequest) -> None:
         df.to_csv(csv_bytes)
         csv_bytes.seek(0)
         file_client.upload_data(csv_bytes,overwrite = True)
+        url = os.environ[f"train_{ticker}_url"]
+        res = requests.get(url)
 
     if mytimer.past_due:
         logging.info('The timer is past due!')
