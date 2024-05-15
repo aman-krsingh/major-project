@@ -65,7 +65,7 @@ def main(req: HttpRequest) -> HttpResponse:
     
     #splitting data.
     training_size = int(len(data) * 0.40)
-    #test_size = len(data) - training_size
+    test_size = len(data) - training_size
     
     train_data, test_data = data[0:training_size,:], data[training_size:len(data), :1]
     
