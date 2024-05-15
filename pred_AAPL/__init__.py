@@ -183,9 +183,9 @@ def main(req: HttpRequest) -> HttpResponse:
 
     
     result={
-        "pred_value": days_pred,
-        "hist_with_pred_value":new_data,
-        "hist_value":data
+        "pred_value": [i for x in days_pred.tolist() for i in x],
+        "hist_with_pred_value": [i for x in new_data for i in x],
+        "hist_value": [i for x in data.tolist() for i in x]
     }
     return HttpResponse(json.dumps(result), status_code=200, mimetype="application/json")
 
