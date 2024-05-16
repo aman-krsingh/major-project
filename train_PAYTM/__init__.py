@@ -31,7 +31,7 @@ def main(req: HttpRequest) -> HttpResponse:
     token_credential = DefaultAzureCredential()
     service_client = DataLakeServiceClient(account_url, credential=token_credential)
 
-    ticker='PAYTM.NS'
+    ticker='PAYTM'
    
     filesystem_client = service_client.get_file_system_client(file_system="stocks-data")
     directory_client = filesystem_client.get_directory_client(f"data/{ticker}")

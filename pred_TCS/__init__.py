@@ -18,7 +18,7 @@ from azure.functions import HttpRequest, HttpResponse
 def main(req: HttpRequest) -> HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
     
-    ticker='PAYTM.NS'
+    ticker='TCS'
     time_step =15
     
     model = Sequential()
@@ -79,7 +79,7 @@ def main(req: HttpRequest) -> HttpResponse:
     data = scaler.fit_transform(np.array(data).reshape(-1,1))
     
     #splitting data.
-    training_size = int(len(data) * 0.80)
+    training_size = int(len(data) * 0.60)
     test_size = len(data) - training_size
     
     test_data = data[training_size:len(data), :1]
