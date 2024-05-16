@@ -13,7 +13,15 @@ def main(mytimer: TimerRequest) -> None:
     current_datetime = datetime.now()
     current_date = current_datetime.strftime("%Y-%m-%d")
     
-    ticker_list = ['AAPL', 'META', 'GOOG']
+    ticker_list = ['AAPL', 'GOOG', 'META', 'PAYTM', 'TCS']
+
+    ticker_dict = {
+        'AAPL': "AAPL",
+        'GOOG': "GOOG",
+        'META': "META",
+        'PAYTM': "PAYTM.NS",
+        'TCS': "TCS.NS"
+    }
     
     #storage acount address
     account_url = f"https://storageaacount456.dfs.core.windows.net/"
@@ -26,7 +34,7 @@ def main(mytimer: TimerRequest) -> None:
         directory_client = filesystem_client.get_directory_client(f"data/{ticker}")
         file_client = directory_client.get_file_client(f"{ticker}_{current_date}.csv")
         prd= 12*25
-        df =yf.download(f'{ticker}', period=f'{prd}mo')
+        df =yf.download(ticker_dict[ticker], period=f'{prd}mo')
         csv_bytes= BytesIO()
         df.to_csv(csv_bytes)
         csv_bytes.seek(0)
