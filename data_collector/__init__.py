@@ -14,6 +14,7 @@ def main(mytimer: TimerRequest) -> None:
     current_date = current_datetime.strftime("%Y-%m-%d")
     
     ticker_list = ['AAPL', 'META', 'GOOG']
+    #ticker_list = ['AAPL', 'GOOG', 'META', 'PAYTM.NS', 'TCS.NS']
     
     #storage acount address
     account_url = f"https://storageaacount456.dfs.core.windows.net/"
